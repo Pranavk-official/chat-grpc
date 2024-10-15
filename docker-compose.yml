@@ -1,0 +1,40 @@
+version: "3"
+services:
+  user-service:
+    build: ./user-service
+    ports:
+      - "50051:50051"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/user_db
+
+  chat-service:
+    build: ./chat-service
+    ports:
+      - "50052:50052"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/chat_db
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-service
+      - chat-service
+
+  client:
+    build: ./client
+    ports:
+      - "80:80"
+    depends_on:
+      - gateway
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:

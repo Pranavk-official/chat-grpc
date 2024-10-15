@@ -1,0 +1,42 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Install dependencies
+        run: |
+          cd user-service && npm ci
+          cd ../chat-service && npm ci
+          cd ../gateway && npm ci
+          cd ../client && npm ci
+
+      - name: Run tests
+        run: |
+          cd user-service && npm test
+          cd ../chat-service && npm test
+          cd ../gateway && npm test
+          cd ../client && npm test
+
+      - name: Build Docker images
+        run: |
+          docker build -t user-service ./user-service
+          docker build -t chat-service ./chat-service
+          docker build -t gateway ./gateway
+          docker build -t client ./client
+
+    # Should Add steps to push images to a registry and deploy to Kubernetes cluster
