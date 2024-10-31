@@ -1,18 +1,27 @@
 import React, { useState } from "react";
 import { register } from "../services/userService";
+import { toast } from "react-toastify";
+import { useNavigate, Link } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
 
-const Register = ({ setIsLoggedIn }) => {
+const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await register(username, email, password);
-      setIsLoggedIn(true);
+      toast.success("Registered successfully!");
+      navigate("/"); // Redirect to login page after successful registration
     } catch (error) {
       console.error("Registration failed:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Registration failed. Please try again."
+      );
     }
   };
 
@@ -85,6 +94,14 @@ const Register = ({ setIsLoggedIn }) => {
             </button>
           </div>
         </form>
+        <div className="text-center">
+          <Link
+            to="/"
+            className="text-sm text-indigo-600 hover:text-indigo-500"
+          >
+            Already have an account? Sign in here
+          </Link>
+        </div>
       </div>
     </div>
   );

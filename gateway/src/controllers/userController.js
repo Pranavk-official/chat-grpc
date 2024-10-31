@@ -4,10 +4,7 @@ const path = require("path");
 const config = require("../config");
 const logger = require("../utils/logger");
 
-const PROTO_PATH = path.resolve(
-  __dirname,
-  "../../user-service/src/protos/user.proto"
-);
+const PROTO_PATH = path.resolve(__dirname, "../protos/user.proto");
 
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
@@ -26,6 +23,7 @@ const client = new userProto.UserService(
 
 exports.register = (req, res) => {
   const { username, email, password } = req.body;
+  console.log(req.body);
 
   client.Register({ username, email, password }, (error, response) => {
     if (error) {
@@ -37,11 +35,13 @@ exports.register = (req, res) => {
 };
 
 exports.login = (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
-  client.Login({ email, password }, (error, response) => {
+  client.Login({ username, password }, (error, response) => {
+    console.log(response);
     if (error) {
-      logger.error("Error logging in user:", error);
+      console.log(error);
+      // logger.error("Error logging in user:", error);
       return res.status(500).json({ error: "Failed to log in user" });
     }
     res.json(response);

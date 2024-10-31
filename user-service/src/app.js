@@ -17,10 +17,7 @@ const userProto = grpc.loadPackageDefinition(packageDefinition).user;
 
 const startServer = async () => {
   try {
-    await mongoose.connect(config.mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(config.mongoUri);
     logger.info("Connected to MongoDB");
 
     const server = new grpc.Server();
@@ -38,7 +35,6 @@ const startServer = async () => {
           logger.error("Failed to bind server:", error);
           return;
         }
-        server.start();
         logger.info(`Server running at http://0.0.0.0:${port}`);
       }
     );

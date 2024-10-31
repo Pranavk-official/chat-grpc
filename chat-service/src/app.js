@@ -21,15 +21,12 @@ const chatProto = grpc.loadPackageDefinition(packageDefinition).chat;
 const server = new grpc.Server();
 
 server.addService(chatProto.ChatService.service, {
-  SendMessage: chatController.sendMessage,
-  GetMessages: chatController.getMessages,
+  sendMessage: chatController.sendMessage,
+  getMessages: chatController.getMessages,
 });
 
 mongoose
-  .connect(config.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(config.MONGODB_URI)
   .then(() => {
     logger.info("Connected to MongoDB");
     server.bindAsync(
@@ -40,8 +37,8 @@ mongoose
           logger.error("Failed to bind server:", error);
           return;
         }
-        server.start();
         logger.info(`Server running at http://0.0.0.0:${port}`);
+        server.start();
       }
     );
   })

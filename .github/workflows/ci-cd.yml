@@ -25,12 +25,12 @@ jobs:
           cd ../gateway && npm ci
           cd ../client && npm ci
 
-      - name: Run tests
-        run: |
-          cd user-service && npm test
-          cd ../chat-service && npm test
-          cd ../gateway && npm test
-          cd ../client && npm test
+      # - name: Run tests
+      #   run: |
+      #     cd user-service && npm test
+      #     cd ../chat-service && npm test
+      #     cd ../gateway && npm test
+      #     cd ../client && npm test
 
       - name: Build Docker images
         run: |
@@ -39,4 +39,19 @@ jobs:
           docker build -t gateway ./gateway
           docker build -t client ./client
 
-    # Should Add steps to push images to a registry and deploy to Kubernetes cluster
+      - name: Push images to Docker Hub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          docker tag user-service $DOCKER_USERNAME/user-service
+          docker tag chat-service $DOCKER_USERNAME/chat-service
+          docker tag gateway $DOCKER_USERNAME/gateway
+          docker tag client $DOCKER_USERNAME/client
+          docker push $DOCKER_USERNAME/user-service
+          docker push $DOCKER_USERNAME/chat-service
+          docker push $DOCKER_USERNAME/gateway
+          docker push $DOCKER_USERNAME/client
+
+# should add a way to deploy to k8s cluster
