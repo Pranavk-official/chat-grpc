@@ -20,10 +20,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd user-service && npm ci
-          cd ../chat-service && npm ci
-          cd ../gateway && npm ci
-          cd ../client && npm ci
+          cd user-service && npm i
+          cd ../chat-service && npm i
+          cd ../gateway && npm i
+          cd ../client && npm i
 
       # - name: Run tests
       #   run: |
